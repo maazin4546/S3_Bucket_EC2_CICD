@@ -50,4 +50,32 @@ const register = async (req, res) => {
     }
 };
 
-module.exports = { register };
+const getAllClients = async (req, res) => {
+    try {
+        const clients = await prisma.client.findMany({
+            select: {
+                id: true,
+                userName: true,
+                email: true,
+                mobileNumber: true,
+                profilePicture: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+        });
+
+        res.status(200).json({
+            message: "All clients fetched successfully",
+            total: clients.length,
+            clients,
+        });
+    } catch (error) {
+        console.error("Fetch clients error:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+module.exports = { register, getAllClients };
